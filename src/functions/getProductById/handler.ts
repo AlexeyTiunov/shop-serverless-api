@@ -1,7 +1,7 @@
-import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
-import schema from "@functions/hello/schema";
+import { formatJSONResponse } from "@libs/api-gateway";
 import { products } from "@functions/getProductList/mock";
 import { Product } from "../../models/Product";
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda";
 
 export const HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type",
@@ -13,20 +13,19 @@ const getResultFromDb = async (id: string): Promise<Product> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const result: Product = products.find((item) => item.id === id);
-      result ? resolve(result) : reject("No product found");
+      result ? resolve(result) : reject("Product not found");
     }, 200);
   });
 };
 
-export const getProductById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+export const getProductById: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (event) => {
   try {
     const {
-      pathParameters: { id },
+      pathParameters: { productId },
     } = event;
-
-    const searchResult = await getResultFromDb(id);
+    const searchResult = await getResultFromDb(productId);
     return formatJSONResponse(searchResult, 200, HEADERS);
   } catch (e) {
-    return formatJSONResponse(e, 400, HEADERS);
+    return formatJSONResponse(e, 404, HEADERS);
   }
 };
