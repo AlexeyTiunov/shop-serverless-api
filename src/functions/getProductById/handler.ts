@@ -13,7 +13,7 @@ const getResultFromDb = async (id: string): Promise<Product> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const result: Product = products.find((item) => item.id === id);
-      result ? resolve(result) : reject("Product not found");
+      result ? resolve(result) : reject("Product nottt found");
     }, 200);
   });
 };
