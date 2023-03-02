@@ -1,3 +1,25 @@
+Task 3 what was done:
+1. Task 3.1  all criteria are followed. The [link](https://d359ghg4pp7ul2.cloudfront.net/) to the CloudFront to check if the api integrated. 
+2. Task 3.2  all criteria are followed.
+3. Additional (optional) tasks:
+   - +5 - Async/await is used in lambda functions
+   - +5 - ES6 modules are used for Product Service implementation
+   - +4 - Custom Webpack/ESBuild/etc is manually configured for Product Service. Not applicable for preconfigured/built-in bundlers that come with templates, plugins, etc.
+   - +4 (All languages) - Lambda handlers are covered by basic UNIT tests (NO infrastructure logic is needed to be covered)
+   - +4 (All languages) - Lambda handlers (getProductsList, getProductsById) code is written not in 1 single module (file) and separated in codebase.
+   - +4 (All languages) - Main error scenarios are handled by API ("Product not found" error).
+
+Instruction how to build,
+run:
+- npm run build
+- cd dist
+- serverless deploy
+
+
+
+
+
+
 # Serverless - AWS Node.js Typescript
 
 This project has been generated using the `aws-nodejs-typescript` template from the [Serverless framework](https://www.serverless.com/).
