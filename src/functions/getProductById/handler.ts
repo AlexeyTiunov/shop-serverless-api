@@ -1,21 +1,28 @@
 import { formatJSONResponse } from "@libs/api-gateway";
-import { products } from "@functions/getProductList/mock";
-import { Product } from "../../models/Product";
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda";
+import { findItemById } from "../../services/dynamoDB/getItem";
+import { GetItemCommandOutput } from "@aws-sdk/client-dynamodb";
 
+const invalidDataErrors: Array<string> = [
+  "AccessDeniedException",
+  "ConditionalCheckFailedException",
+  "IncompleteSignatureException",
+  "ItemCollectionSizeLimitExceededException",
+  "LimitExceededException",
+  "MissingAuthenticationTokenException",
+  "ProvisionedThroughputExceeded",
+  "ProvisionedThroughputExceededException",
+  "RequestLimitExceeded",
+  "ResourceInUseException",
+  "ResourceNotFoundException",
+  "ThrottlingException",
+  "UnrecognizedClientException",
+  "ValidationException",
+];
 export const HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
-};
-
-const getResultFromDb = async (id: string): Promise<Product> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const result: Product = products.find((item) => item.id === id);
-      result ? resolve(result) : reject("Product nottt found");
-    }, 200);
-  });
 };
 
 export const getProductById: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (event) => {
@@ -23,9 +30,12 @@ export const getProductById: Handler<APIGatewayProxyEvent, APIGatewayProxyResult
     const {
       pathParameters: { productId },
     } = event;
-    const searchResult = await getResultFromDb(productId);
-    return formatJSONResponse(searchResult, 200, HEADERS);
+    const result: GetItemCommandOutput = await findItemById(productId);
+    return formatJSONResponse(result.Item, 200, HEADERS);
   } catch (e) {
-    return formatJSONResponse(e, 404, HEADERS);
+    if (invalidDataErrors.includes(e.name)) {
+      return formatJSONResponse(e, 400, HEADERS);
+    }
+    return formatJSONResponse(e, 500, HEADERS);
   }
 };

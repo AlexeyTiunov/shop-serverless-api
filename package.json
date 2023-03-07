@@ -5,12 +5,16 @@
   "main": "serverless.ts",
   "scripts": {
     "build": "node esbuild.config.mjs",
-    "test": "jest --watchAll --config=jest.config.js"
+    "test": "jest --watchAll --config=jest.config.js",
+    "dynamo:iUpload": "ts-node ./src/scripts/initialUploadToTables.ts "
   },
   "engines": {
     "node": ">=14.15.0"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.284.0",
+    "@aws-sdk/service-error-classification": "^3.272.0",
+    "@aws-sdk/types": "^3.272.0",
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
     "yup": "^1.0.1"
