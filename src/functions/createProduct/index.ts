@@ -1,13 +1,10 @@
-//import { handlerPath } from "@libs/handler-resolver";
-
 export default {
   //  handler: `${handlerPath(__dirname)}/handler.getProductList`,
-  handler: `./handler.getProductList`,
-  // role: "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+  handler: `./handler.createProduct`,
   events: [
     {
       http: {
-        method: "get",
+        method: "post",
         path: "/products",
         cors: {
           origin: "*",
