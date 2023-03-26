@@ -1,15 +1,26 @@
-Task 3 what was done:
-1. Task 3.1  all criteria are followed. The [link](https://d359ghg4pp7ul2.cloudfront.net/) to the CloudFront to check if the api integrated. 
-2. Task 3.2  all criteria are followed.
-3. Additional (optional) tasks:
-   - +5 - Async/await is used in lambda functions
-   - +5 - ES6 modules are used for Product Service implementation
-   - +4 - Custom Webpack/ESBuild/etc is manually configured for Product Service. Not applicable for preconfigured/built-in bundlers that come with templates, plugins, etc.
-   - +4 (All languages) - Lambda handlers are covered by basic UNIT tests (NO infrastructure logic is needed to be covered)
-   - +4 (All languages) - Lambda handlers (getProductsList, getProductsById) code is written not in 1 single module (file) and separated in codebase.
-   - +4 (All languages) - Main error scenarios are handled by API ("Product not found" error).
 
-Instruction how to build,
+# Task 6 what was done:
+  ## task 6.1 
+- Create a lambda function called catalogBatchProcess under the same Serverless config file (i.e. serverless.yaml) of the Product Service which will be triggered by an SQS event.
+- Create an SQS queue called catalogItemsQueue, in the resources section of the same serverless.yml file.
+- Configure the SQS to trigger lambda catalogBatchProcess with 5 messages at once via batchSize property.
+- The lambda function should iterate over all SQS messages and create corresponding products in the products table
+
+## task 6.2 is done, 
+see another repo link 
+https://github.com/AlexeyTiunov/serverless-import-service/pull/2
+
+ ## task 6.3 done 
+- Create an SNS topic createProductTopic and email subscription in the resources section in serverless.yml of the Product Service.
+- Create a subscription for this SNS topic with an email endpoint type with your own email in there.
+- Update the catalogBatchProcess lambda function in the Product Service to send an event to the SNS topic once it creates products.
+
+
+### Additional (optional) tasks
++15/2 =7.5  (All languages) - set a Filter Policy for SNS createProductTopic in serverless.yml
+
+
+### Instruction how to build,
 run:
 - npm run build
 - cd dist

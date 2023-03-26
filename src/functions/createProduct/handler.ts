@@ -1,6 +1,11 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda";
-import { batchTableQuery } from "../../services/dynamoDB/batchTableQuery";
+import { createTransaction } from "../../services/dynamoDB/createTransaction";
 import { formatJSONResponse } from "@libs/api-gateway";
+export const HEADERS = {
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+};
 
 const invalidDataErrors: Array<string> = [
   "AccessDeniedException",
@@ -17,17 +22,13 @@ const invalidDataErrors: Array<string> = [
   "ThrottlingException",
   "UnrecognizedClientException",
   "ValidationException",
+  "TransactionCanceledException",
 ];
-
-export const HEADERS = {
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
-};
-export const getProductList: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async () => {
+export const createProduct: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (event) => {
   try {
-    const result = await batchTableQuery(["products", "stock"]);
-    return formatJSONResponse(result, 200, HEADERS);
+    const body = JSON.parse(event.body);
+    const result = await createTransaction(body);
+    return formatJSONResponse([{ message: "Item was added" }, result], 200, HEADERS);
   } catch (e) {
     if (invalidDataErrors.includes(e.name)) {
       return formatJSONResponse(e, 400, HEADERS);
