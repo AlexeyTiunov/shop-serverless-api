@@ -1,67 +1,26 @@
-HomeWork 4 what was done:
-###  4.1
-1. Use AWS Console to create two database tables in DynamoDB. Expected schemas for products and stocks:
-Product model:
-```
-products:
-id -  uuid (Primary key)
-title - text, not null
-description - text
-price - integer
-Stock model:
-```
-````
-stocks:
-product_id - uuid (Foreign key from products.id)
-count - integer (Total number of products in stock, can't be exceeded)
-````
- 2.  Write a script to fill tables with test examples. Store it in your Github repository. Execute it for your DB to fill data.
-src/scripts/initialUploadToTables.ts   
-````
-npm run dynamo:iUpload
-````
-### 4.2
-1. Extend your serverless.yml file with data about your database table and pass it to lambda’s environment variables section.
-2. Integrate the getProductsList lambda to return via GET /products request a list of products from the database (joined stocks and products tables).
-3. Implement a Product model on FE side as a joined model of product and stock by productId. For example:
-BE: Separate tables in DynamoDB
-````
-Stock model example in DB:
-{
-product_id: '19ba3d6a-f8ed-491b-a192-0a33b71b38c4',
-count: 2
-}
+
+# Task 6 what was done:
+  ## task 6.1 
+- Create a lambda function called catalogBatchProcess under the same Serverless config file (i.e. serverless.yaml) of the Product Service which will be triggered by an SQS event.
+- Create an SQS queue called catalogItemsQueue, in the resources section of the same serverless.yml file.
+- Configure the SQS to trigger lambda catalogBatchProcess with 5 messages at once via batchSize property.
+- The lambda function should iterate over all SQS messages and create corresponding products in the products table
+
+## task 6.2 is done, 
+see another repo link 
+https://github.com/AlexeyTiunov/serverless-import-service/pull/2
+
+ ## task 6.3 done 
+- Create an SNS topic createProductTopic and email subscription in the resources section in serverless.yml of the Product Service.
+- Create a subscription for this SNS topic with an email endpoint type with your own email in there.
+- Update the catalogBatchProcess lambda function in the Product Service to send an event to the SNS topic once it creates products.
 
 
-Product model example in DB:
-{
-id: '19ba3d6a-f8ed-491b-a192-0a33b71b38c4'
-title: 'Product Title',
-description: 'This product ...',
-price: 200
-}
-````
-4. Integrate the getProductsById lambda to return via GET /products/{productId} request a single product from the database.
-
-### 4.3 
-1. Create a lambda function called createProduct under the same Serverless config file (i.e. serverless.yaml) of Product Service which will be triggered by the HTTP POST method.
-2. The requested URL should be /products.
-3. Implement its logic so it will be creating a new item in a Products table.
-4. Save the URL (API Gateway URL) to execute the implemented lambda functions for later - you'll need to provide it in the PR (e.g in PR's description) when submitting the task.
+### Additional (optional) tasks
++15/2 =7.5  (All languages) - set a Filter Policy for SNS createProductTopic in serverless.yml
 
 
-### Additional (optional) tasks  
-1. +6 (All languages) - POST /products lambda functions returns error 400 status code if product data is invalid
-2. +6 (All languages) - All lambdas return error 500 status code on any error (DB connection, any unhandled error in code)
-3. +6 (All languages) - All lambdas do console.log for each incoming requests and their arguments
-4.  -----
-5. +6 (All languages) - Transaction based creation of product (in case stock creation is failed then related to this stock product is not created and not ready to be used by the end user and vice versa)
-    Transaction was used through the  transactWriteItems [(DynamoDB SDK transactWriteItems )](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-dynamodb/classes/dynamodb.html#transactwriteitems)
-
-
-
-
-Instruction how to build,
+### Instruction how to build,
 run:
 - npm run build
 - cd dist
